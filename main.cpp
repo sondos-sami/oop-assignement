@@ -90,9 +90,9 @@ BigReal::BigReal(double realNumber ){
         fraction_part="0";
     }
 
-    cout<<sign<<endl;
+   /* cout<<sign<<endl;
     cout<<integer_part<<endl;
-    cout<<fraction_part<<endl;
+   */ cout<<fraction_part<<endl;
 
 }
 
