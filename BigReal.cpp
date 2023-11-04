@@ -129,7 +129,90 @@ BigReal BigReal :: operator-(BigReal &other) {
 bool BigReal::operator == (  BigReal anotherReal) {
     return (sign == anotherReal.sign && fraction_part == anotherReal.fraction_part&&integer_part==anotherReal.integer_part);
 }
-
+bool BigReal:: operator > (BigReal  anotherReal){
+    if(sign=='+' && anotherReal.sign == '-'){
+        return true;
+    }
+    else if(sign =='-' && anotherReal.sign == '+'){
+        return false;
+    }
+    else if(sign == '-' && anotherReal.sign == '-'){
+        if(integer_part.size() > anotherReal.integer_part.size()){
+            return false;
+        }
+        else if( integer_part.size() < anotherReal.integer_part.size()){
+            return  true;
+        }
+        else if(integer_part.size() == anotherReal.integer_part.size()){
+            for (int i = 0; i <integer_part.size() ; ++i) {
+                if((integer_part[i] - '0') > (anotherReal.integer_part[i] - '0')){
+                    return false;
+                }
+                else if((integer_part[i] - '0') < (anotherReal.integer_part[i] - '0')){
+                    return true;
+                }
+            }
+            if(fraction_part.size() > anotherReal.fraction_part.size()){
+                for (int i = 0; i <anotherReal.fraction_part.size() ; ++i) {
+                    if((fraction_part[i] - '0') > (anotherReal.fraction_part[i] -'0')){
+                        return false;
+                    }
+                    else if((fraction_part[i] - '0') < (anotherReal.fraction_part[i] -'0')){
+                        return true;
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i <fraction_part.size() ; ++i) {
+                    if((fraction_part[i] - '0') > (anotherReal.fraction_part[i] -'0')){
+                        return false;
+                    }
+                    else if((fraction_part[i] - '0') < (anotherReal.fraction_part[i] -'0')){
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    else if(sign == '+' && anotherReal.sign == '+'){
+        if(integer_part.size() < anotherReal.integer_part.size()){
+            return false;
+        }
+        else if( integer_part.size() > anotherReal.integer_part.size()){
+            return true;
+        }
+        else if(integer_part.size() == anotherReal.integer_part.size()){
+            for (int i = 0; i <integer_part.size() ; ++i) {
+                if((integer_part[i] - '0') < (anotherReal.integer_part[i] - '0')){
+                    return false;
+                }
+                else if((integer_part[i] - '0') > (anotherReal.integer_part[i] - '0')){
+                    return true;
+                }
+            }
+            if(fraction_part.size() > anotherReal.fraction_part.size()){
+                for (int i = 0; i <anotherReal.fraction_part.size() ; ++i) {
+                    if((fraction_part[i] - '0') < (anotherReal.fraction_part[i] -'0')){
+                        return false;
+                    }
+                    else if((fraction_part[i] - '0') > (anotherReal.fraction_part[i] -'0')){
+                        return true;
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i <fraction_part.size() ; ++i) {
+                    if((fraction_part[i] - '0') < (anotherReal.fraction_part[i] -'0')){
+                        return false;
+                    }
+                    else if((fraction_part[i] - '0') > (anotherReal.fraction_part[i] -'0')){
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+}
 ostream &operator << (ostream &out, const BigReal& num){
     out << num.sign << num.integer_part << '.' << num.fraction_part;
     return out;
