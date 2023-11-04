@@ -126,6 +126,9 @@ BigReal BigReal :: operator-(BigReal &other) {
 
 
 }
+bool BigReal::operator == (  BigReal anotherReal) {
+    return (sign == anotherReal.sign && fraction_part == anotherReal.fraction_part&&integer_part==anotherReal.integer_part);
+}
 
 ostream &operator << (ostream &out, const BigReal& num){
     out << num.sign << num.integer_part << '.' << num.fraction_part;
