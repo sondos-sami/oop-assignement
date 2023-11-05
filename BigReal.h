@@ -20,7 +20,7 @@ public:
     BigReal& operator=(BigReal& other);
     void setNum (string realNumber);
     char get_sign();
-    int size();
+    int get_size();
     BigReal operator+ (BigReal& other);
     BigReal operator- (BigReal& other);
     bool operator< (BigReal anotherReal);
