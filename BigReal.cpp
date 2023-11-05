@@ -98,6 +98,33 @@ BigReal & BigReal::operator= (BigReal& other) {// Assignment operator
     return *this;//pointer to return
 
 }
+char BigReal::get_sign(){
+   return this->sign;
+}
+int  BigReal:: get_size(){
+    int ans=this->integer_part.size()+this->fraction_part.size();
+    return ans;
+}
+void BigReal::setNum(string s) {
+    size_t dotPos;
+    char Sign = '+';
+    dotPos = s.find('.');
+    if(s[0] == '-'){
+        Sign = '-';
+        string intPart = s.substr(1 , dotPos-1);
+        string fracPart = s.substr(dotPos+1 , s.size()-1);
+        this->integer_part = intPart;
+        this->fraction_part = fracPart;
+        this->sign = Sign;
+    }
+    else{
+        string intPart = s.substr(0 , dotPos);
+        string fracPart = s.substr(dotPos+1 , s.size()-1);
+        this->integer_part = intPart;
+        this->fraction_part = fracPart;
+        this->sign = Sign;
+    }}
+
 
 BigReal::BigReal(const BigReal& other){// Copy constructor
 
