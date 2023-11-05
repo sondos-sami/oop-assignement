@@ -126,7 +126,19 @@ BigReal BigReal :: operator-(BigReal &other) {
 
 
 }
-bool BigReal::operator == (  BigReal anotherReal) {
+ bool BigReal::operator == (  BigReal anotherReal) {
+    if (anotherReal.fraction_part.size() > fraction_part.size()) {   //add fraction part
+        fraction_part= fraction_part+string(anotherReal.fraction_part.size()-fraction_part.size(), '0');
+    }//padding
+
+     else
+        anotherReal.fraction_part= anotherReal.fraction_part+string(fraction_part.size()-anotherReal.fraction_part.size(), '0');
+
+    if (anotherReal.integer_part.size() > integer_part.size()) {   //add fraction part
+        integer_part=string(anotherReal.integer_part.size()-integer_part.size(), '0')+integer_part;//padding
+
+    } else
+      anotherReal.integer_part=string(integer_part.size()-anotherReal.integer_part.size(), '0')+anotherReal.integer_part;
     return (sign == anotherReal.sign && fraction_part == anotherReal.fraction_part&&integer_part==anotherReal.integer_part);
 }
 bool BigReal:: operator > (BigReal  anotherReal){
