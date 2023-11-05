@@ -6,7 +6,7 @@ using namespace std;
 
 class BigReal {
 private:
-    char sign = ' ';
+    char sign = '+';
     string integer_part;
     string fraction_part;
     string realNumber;
@@ -18,6 +18,9 @@ public:
     BigReal(string realNumber);
     BigReal(const BigReal &other);
     BigReal& operator=(BigReal& other);
+    void setNum (string realNumber);
+    char get_sign();
+    int size();
     BigReal operator+ (BigReal& other);
     BigReal operator- (BigReal& other);
     bool operator< (BigReal anotherReal);
