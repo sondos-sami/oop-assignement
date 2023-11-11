@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-class Machine {
 
-};
 
 class Memory{
 private:
@@ -38,10 +36,25 @@ public:
     }
 
 };
-
-class Register{
+class Machine {
 
 };
+
+class Register{
+int registers[16];
+public:
+
+string instruction_register;
+
+void set_value(int reg_num,int new_val){
+    registers[reg_num-1]=new_val;
+}
+void display_status(int num){//5
+cout<<"Register "<<num<<" now contains :"<<registers[num-1]<<endl;
+}
+
+};
+
 
 class arithmeticUnit {
 
