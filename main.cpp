@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 string decToHex(string n){
     string hexDeciNum;
     int z = stoi(n);
@@ -14,6 +13,7 @@ string decToHex(string n){
             hexDeciNum.push_back(temp + 48);
             i++;
         }
+
         else{
             hexDeciNum.push_back(temp + 55);
             i++;
@@ -39,7 +39,6 @@ int hexToDec(string hex){
     }
     return dec;
 }
-
 class Memory{
 private:
     int size;
@@ -78,87 +77,54 @@ public:
             exit(1);
         }
     }
-
 };
- class Machine {
-    private:
-        Memory& memory;
-        int pc;
-        vector<string> registers;
-        char op_code;
-        int output_register;
-        string memory_cell;
-        string val_mem;
-        int m;
+
+class Machine {
+private:
+    Memory &memory;
+    string pc;
+    vector<string> registers;
+    char op_code;
+    int output_register;
+    string memory_cell;
+    string val_mem;
+    int m;
 
 
-    public:
-        Machine(Memory& mem) : memory(mem),  registers(16, 0), pc(0) {}
+public:
+    Machine(Memory &mem) : memory(mem), registers(16, "0"), pc("0") , op_code('0') , output_register(0) {}
 
-        int fetch() {
-            string  instruction = memory.read(pc);
+    string fetch() {
 
+        string instruction = memory.read(pc);
+        int n = stoi(pc);
+        n++;
+        pc = to_string(n);
+        instruction += memory.read(pc);
+        return instruction;
+    }
+
+    void decode(string instruction) {
+        if (instruction[0] == '1') {//1056
+            op_code = '1';
+            output_register = instruction[1];
+            memory_cell = instruction.substr(2,4);
+
+        } else if (instruction[0] == '2') {
+            op_code = '2';
+            output_register = instruction[1];
         }
 
-        void decode(string  instruction) {
-           if(instruction[0]=='1'){//1056
-             op_code='1';
-             output_register=instruction[1];
-             memory_cell=instruction[2]+instruction[3];
-
-           }
-           else if(instruction[0]=='2'){
-               op_code='2';
-               output_register=instruction[1];
-             val_mem =instruction.substr(2);
-           }
-        /*   else if(instruction[0]=='3'){
-               op_code='3';
-           }
-           else if(instruction[0]=='4'){
-               op_code='4';
-           }
-           else if(instruction[0]=='5'){
-               op_code='5';
-           }
-           else if(instruction[0]=='6'){
-               op_code='6';
-           }else if(instruction[0]=='B'){
-               op_code='B';
-           }
-
-
-        }
-*/}
-        void execute(string instruction){
-            while(instruction!="C000"){
-                if(op_code=='1'){
-                    int m= stoi(memory_cell);
-                    registers[output_register]=memory.read(m);
-                }
+    }
+    void execute(string instruction){
+        
+            if(instruction[0] =='1'){
+                registers[instruction[1] - '0'] = memory.read(instruction.substr(2,4));
             }
 
-    }};
+            else if(instruction[0] == '2'){
+                registers[output_register] = instruction.substr(2,4);
+            }
 
-
-class Register:public Machine{
-    vector<string> registers;
-public:
-
-string instruction_register;
-
-void set_value(int reg_num,int new_val){
-    registers[reg_num-1]=new_val;
-}
-void display_status(int num){//5
-cout<<"Register "<<num<<" now contains :"<<registers[num-1]<<endl;
-}
-
+        }
 };
-
-
-
-class arithmeticUnit {
-
-};
-
