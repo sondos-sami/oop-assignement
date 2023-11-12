@@ -44,7 +44,7 @@ private:
     int size;
 public:
     vector <pair<string ,string>> data;
-    Memory(int memorySize) : size(memorySize) , data(memorySize , {"" , ""}){};
+    Memory(int memorySize) : size(memorySize) , data(memorySize , {"0" , "0"}){};
 
     string read(string address){
         int n = hexToDec(address);
@@ -77,6 +77,7 @@ public:
             exit(1);
         }
     }
+
 };
 
 class Machine {
@@ -88,11 +89,8 @@ private:
     int output_register;
     string memory_cell;
     string val_mem;
-    int m;
-
-
 public:
-    Machine(Memory &mem) : memory(mem), registers(16, "0"), pc("0") , op_code('0') , output_register(0) {}
+    Machine(Memory &mem) : memory(mem), registers(16, "0"), pc("0") {}
 
     string fetch() {
 
@@ -104,26 +102,29 @@ public:
         return instruction;
     }
 
-    void decode(string instruction) {
-        if (instruction[0] == '1') {//1056
-            op_code = '1';
-            output_register = instruction[1];
-            memory_cell = instruction.substr(2,4);
-
-        } else if (instruction[0] == '2') {
-            op_code = '2';
-            output_register = instruction[1];
-        }
-
-    }
+//    void decode(string instruction) {
+//        if (instruction[0] == '1') {//1056
+//            op_code = '1';
+//            output_register = instruction[1];
+//            memory_cell = instruction.substr(2,4);
+//
+//        } else if (instruction[0] == '2') {
+//            op_code = '2';
+//            output_register = instruction[1];
+//        }
+//
+//    }
     void execute(string instruction){
-        
+
             if(instruction[0] =='1'){
                 registers[instruction[1] - '0'] = memory.read(instruction.substr(2,4));
             }
 
             else if(instruction[0] == '2'){
-                registers[output_register] = instruction.substr(2,4);
+                registers[instruction[1] - '0'] = instruction.substr(2,4);
+            }
+            else if(instruction[0] == '3'){
+
             }
 
         }
