@@ -80,12 +80,69 @@ public:
     }
 
 };
-class Machine {
+ class Machine {
+    private:
+        Memory& memory;
+        int pc;
+        vector<string> registers;
+        char op_code;
+        int output_register;
+        string memory_cell;
+        string val_mem;
+        int m;
 
-};
 
-class Register{
-int registers[16];
+    public:
+        Machine(Memory& mem) : memory(mem),  registers(16, 0), pc(0) {}
+
+        int fetch() {
+            string  instruction = memory.read(pc);
+
+        }
+
+        void decode(string  instruction) {
+           if(instruction[0]=='1'){//1056
+             op_code='1';
+             output_register=instruction[1];
+             memory_cell=instruction[2]+instruction[3];
+
+           }
+           else if(instruction[0]=='2'){
+               op_code='2';
+               output_register=instruction[1];
+             val_mem =instruction.substr(2);
+           }
+        /*   else if(instruction[0]=='3'){
+               op_code='3';
+           }
+           else if(instruction[0]=='4'){
+               op_code='4';
+           }
+           else if(instruction[0]=='5'){
+               op_code='5';
+           }
+           else if(instruction[0]=='6'){
+               op_code='6';
+           }else if(instruction[0]=='B'){
+               op_code='B';
+           }
+
+
+        }
+*/}
+        void execute(string instruction){
+            while(instruction!="C000"){
+                if(op_code=='1'){
+                    int m= stoi(memory_cell);
+                    registers[output_register]=memory.read(m);
+                }
+            }
+
+    }};
+
+
+class Register:public Machine{
+    vector<string> registers;
 public:
 
 string instruction_register;
@@ -98,6 +155,7 @@ cout<<"Register "<<num<<" now contains :"<<registers[num-1]<<endl;
 }
 
 };
+
 
 
 class arithmeticUnit {
