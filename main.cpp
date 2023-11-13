@@ -165,5 +165,18 @@ public:
             }
         }
     }
+    
+        void run (){
+        while( instruction!="C000"){
+            fetch();
+            execute(instruction);
+            
+        int n=stoi(pc);
+        n++;}
+    }
+    const vector<string>&getRegisters()
+    const{
+        return registers;
+    }
 
 };
