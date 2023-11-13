@@ -166,17 +166,14 @@ public:
         }
     }
     
-        void run (){
-        while( instruction!="C000"){
-            fetch();
-            execute(instruction);
-            
-        int n=stoi(pc);
-        n++;}
+       void run() {
+        fetch();
+        decode(instruction);
+        execute(instruction);
+        int l=stoi(pc);
+          l++;
+          pc=to_string(l);
     }
-    const vector<string>&getRegisters()
-    const{
-        return registers;
-    }
+
 
 };
