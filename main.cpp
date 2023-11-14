@@ -294,7 +294,21 @@ void program(){
         }
 
         machine.run(value);
-
+        int x;
+        cout << endl << "If you want to display the status now type (1), if you don't type (0): " << endl;
+        cin >> x;
+        if(x){
+            cout << endl << "Registers: " << endl << endl;
+            for (int i = 0; i < 16 ; ++i) {
+                cout << "-------------------------------------" << endl;
+                cout<<"Register "<<i+1<<" contains :"<<machine.registers[i]<<endl;
+            }
+            cout << "____________________________________" << endl << endl;
+            cout << "Program Counter: " <<machine.pc << endl;
+            cout << "____________________________________" << endl << endl;
+            cout << "Instruction Register: " << value << endl;
+            cout << "____________________________________" << endl << endl;
+        }
     }
     cout << endl << "Registers: " << endl << endl;
     for (int i = 0; i < 16 ; ++i) {
@@ -303,6 +317,9 @@ void program(){
     }
     cout << "____________________________________" << endl << endl;
     cout << "Program Counter: " <<machine.pc << endl;
+    cout << "____________________________________" << endl << endl;
+    cout << "Instruction Register: " << value << endl;
+    cout << "____________________________________" << endl << endl;
 
 }
 
