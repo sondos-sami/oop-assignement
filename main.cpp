@@ -31,13 +31,7 @@ public:
 // This class represents a 3 x 3 board
 // used in X_O game
 class game3_Board:public Board {
-    int count_n(char s){
-        for(int i=0;i<n_rows;++i){
-            for(int j=0;j<n_cols;++j){
-
-            }
-        }
-    }
+   
 public:
     game3_Board ();
     bool update_board (int x, int y, char mark);
