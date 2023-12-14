@@ -1,354 +1,269 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <random>
+#include <iomanip>
+#include <algorithm>
+
 using namespace std;
+class Board {
+protected:
+    int n_rows, n_cols;
+    char** board;//It is a pointer to a char pointer, basically a 2 dimensional array of characters.
+    int  n_moves = 0;
 
-string decToHex(string n){
+public:
+    // Return true  if move is valid and put it on board
+    // within board boundaries in empty cell
+    // Return false otherwise
+    virtual bool update_board (int x, int y, char symbol) = 0;
+    // Returns true if there is any winner
+    // either X or O
+    // Written in a complex way. DO NOT DO LIKE THIS.
+    virtual bool is_winner() = 0;
+    // Return true if all moves are done and no winner
+    virtual bool is_draw() = 0;
+    // Display the board and the pieces on it
+    virtual void display_board() = 0;
+    // Return true if game is over
+    virtual bool game_is_over() = 0;
+};
 
-    string hexDeciNum;
-    int z = stoi(n);
-    int i = 0;
+///////////////////////////////////////////
+// This class represents a 3 x 3 board
+// used in X_O game
+class game3_Board:public Board {
+    int count_n(char s){
+        for(int i=0;i<n_rows;++i){
+            for(int j=0;j<n_cols;++j){
 
-    while(z != 0){
-
-        int temp;
-        temp = z % 16;
-
-        if(temp < 10){
-            hexDeciNum.push_back(temp + 48);
-            i++;
+            }
         }
-
-        else{
-            hexDeciNum.push_back(temp + 55);
-            i++;
-        }
-
-        z /= 16;
     }
+public:
+    game3_Board ();
+    bool update_board (int x, int y, char mark);
+    void display_board();
+    bool is_winner();
+    bool is_draw();
+    bool game_is_over();
+};
 
-    reverse(hexDeciNum.begin() , hexDeciNum.end());
-    return hexDeciNum;
-}
+///////////////////////////////////////////
+// This class represents a player who has
+// a name and a symbol to put on board
+class Player {
+protected:
+    string name;
+    char symbol;
+public:
+    // Two constructors to initiate player
+    // Give player a symbol to use in playing
+    // It can be X or O or others
+    // Optionally, you can give him ID or order
+    // Like Player 1 and Player 2
+    Player (char symbol); // Needed for computer players
+    Player (int order, char symbol);
+    // Get desired move: x y (each between 0 and 2)
+    // Virtual (can change for other player types)
+    virtual void get_move(int& x, int& y);
+    // Give player info as a string
+    string to_string();
+    // Get symbol used by player
+    char get_symbol();
+};
 
-int hexToDec(string hex){
+///////////////////////////////////////////
+// This class represents a random computer player
+// that generates random positions x y (0 to 2)
+// If invalid, game manager asks to regenerate
+class RandomPlayer: public Player {
+protected:
+    int dimension;
+public:
+    // Take a symbol and pass it to parent
+    RandomPlayer (char symbol, int dimension);
+    // Generate a random move
+    void get_move(int& x, int& y);
+};
 
-    int len = hex.size();
-    int base = 1;
-    int dec = 0;
-
-    for (int i = len - 1; i >= 0 ; --i) {
-
-        if(hex[i] >= '0' && hex[i] <= '9'){
-            dec += (int(hex[i]) - 48) * base;
-            base = base * 16;
-        }
-
-        else if(hex[i] >= 'A' && hex[i] <= 'F') {
-            dec += (int(hex[i]) - 55) * base;
-            base = base * 16;
-        }
-
-    }
-
-    return dec;
-}
-
-class Memory{
+///////////////////////////////////////////
+class GameManager {
 private:
-    int size;
+    Board* boardPtr;
+    Player* players[2];
 public:
-    vector <pair<string ,string>> data;
-    Memory(int memorySize) : size(memorySize) , data(memorySize , {"0" , "0"}){};
-
-    string read(string address){
-
-        int n = hexToDec(address);
-        if (n >= 0 && n < size){
-            return data[n].second;
-        }
-
-        else{
-            cerr << "Error: Attempt to read invalid memory address " << address << endl;
-            exit(1);
-        }
-    }
-
-    void write(string address , string &value){
-        int n = stoi(address);
-        if (n >= 0 && n < size){
-
-            string x = value.substr(0,2);
-            data[n].second = x;
-
-            if(n == 0){
-                data[n].first = "0";
-            }
-
-            else{
-                data[n].first = decToHex(address);
-            }
-
-            x = value.substr(2 , 4);
-            data[n + 1].second = x;
-            data[n + 1].first = decToHex(to_string(n + 1));
-
-        }
-
-        else{
-            cerr << "Error: Attempt to read invalid memory address " << address << endl;
-            exit(1);
-        }
-
-    }
-};
-
-class Machine {
-private:
-    Memory &memory;
-    char op_code;
-    char output_register;
-    char other_register;
-    char temp_register;
-    string memory_cell;
-    string memory_val;
-    string instruction;
-public:
-    Machine(Memory &mem) : memory(mem), registers(16, "0"), pc("0") {}
-
-    string fetch() {
-
-        instruction= memory.read(pc);
-        int n = stoi(pc);
-        n++;
-        pc = to_string(n);
-        instruction += memory.read(pc);
-        return instruction;
-    }
-
-    void decode(string instruction) {
-
-        if (instruction[0] == '1') {//1056
-            op_code = '1';
-            output_register = instruction[1];
-            memory_cell = instruction.substr(2,4);
-
-        } else if (instruction[0] == '2') {
-            op_code = '2';
-            output_register = instruction[1];
-            memory_val=instruction.substr(2,4);
-        }
-
-        else if (instruction[0] == '3') {
-            op_code = '3';
-            output_register = instruction[1];
-            memory_cell= instruction.substr(2,4);
-        }
-        else if (instruction[0] == '4') {
-            op_code = '4';
-            output_register = instruction[3];
-            other_register = instruction[2];
-        }
-        else if (instruction[0] == '5') {
-            op_code = '5';
-            output_register = instruction[1];
-            temp_register=instruction[2];
-            other_register=instruction[3];
-        }
-        else if (instruction[0] == 'B') {
-            op_code = 'B';
-            other_register = instruction[1];
-            memory_cell= instruction.substr(2, 4);
-        }
-
-
-    }
-
-    void execute(string instruction){
-
-        if(op_code =='1'){
-            registers[output_register- '0'] = memory.read(memory_cell);
-        }
-
-        else if(op_code == '2'){
-            registers[output_register - '0'] = memory_val;
-        }
-        else if(op_code == '3'){//3043
-            int x=hexToDec(memory_cell);
-            memory.data[x].second=decToHex(registers[output_register-'0']);
-        }
-        else if (op_code == '4') { //done
-            string x;
-            x.push_back(other_register);
-            int x1 = hexToDec(x);
-
-            string y;
-            y.push_back(output_register);
-            int y1 = hexToDec(y);
-
-            registers[y1] = registers[x1];
-        }
-        else if (op_code == '5') { //done
-
-            string x = registers[temp_register - '0' ];
-            int r1 = hexToDec(x);
-
-            string y = registers[other_register - '0' ];;
-            int r2 = hexToDec(y);
-
-            int sum = r1 + r2;
-
-
-
-            registers[output_register - '0'] = decToHex(to_string(sum));
-
-        }
-        else if (instruction[0] == 'B') { //done
-            if (registers[other_register - '0'] == registers[0]) {
-                pc = memory_cell;
-            }
-
-        }
-
-    }
-
-    void run(string instruction) {
-        fetch();
-        decode(instruction);
-        execute(instruction);
-
-    }
-
-    vector<string> registers;
-    string pc;
-};
-
-class Register:public Machine{
-    vector<string> registers;
-public:
-
-
-    void set_value(int reg_num,string new_val){
-        registers[reg_num-1]=new_val;
-    }
-    void display_status(int num){//5
-        cout<<"Register "<<num<<" now contains :"<<registers[num-1]<<endl;
-    }
-    void print_registers(){
-        for(int i=0;i<16;++i){
-            cout<<"register "<<i+1<<" contains :"<<registers[i]<<endl;
-        }
-    }
+    GameManager(Board*, Player* playerPtr[2]);
+    void run();
+    // This method creates board and players
+    // It displays board
+    // While True
+    //   For each player
+    //      It takes a valid move as x, y pair (between 0 - 2)
+    //      It updates board and displays otit
+    //      If winner, declare so and end
+    //      If draw, declare so and end
 
 };
 
-void program(){
-    //____________________________\\
-         :Initialize the memory:
 
-    int memorySize = 256;
-    Memory memory(memorySize);
 
-    //______________________________\\
-        Reading the input file
-
-    string fileName;
-    cout << "Enter the file you want to read the input from:";
-    cin >> fileName;
-
-    ifstream inputFile(fileName);
-    if (!inputFile) {
-        cout << "Error: Unable to open program file." << endl;
-        exit(1) ;
+// Set the board
+game3_Board::game3_Board () {
+    n_rows = n_cols = 5;
+    board = new char*[n_rows];
+    for (int i = 0; i < n_rows; i++) {
+        board [i] = new char[n_cols];
+        for (int j = 0; j < n_cols; j++)
+            board[i][j] = 0;
     }
+}
 
-    string address = "0";
-    string value;
-    while (inputFile >> value) {
-        memory.write(address, value);
-        int n = stoi(address);
-        n += 2;
-        address = to_string(n);
+// Return true  if move is valid and put it on board
+// within board boundaries in empty cell
+// Return false otherwise
+bool game3_Board::update_board (int x, int y, char mark){
+    // Only update if move is valid
+    if (!(x < 0 || x > 4 || y < 0 || y > 4) && (board[x][y] == 0)) {
+        board[x][y] = toupper(mark);
+        n_moves++;
+        return true;
     }
-    //___________________________________\\
+    else
+        return false;
+}
 
-    Machine machine(memory);
-    ifstream inputFile2(fileName) ;
-
-    while (inputFile2 >> value){
-        if(value == "c000" || value == "C000"){
-            cout << " ------------------------" << endl;
-            cout << "|    Program Finished   |" << endl;
-            cout << " ------------------------" << endl;
-            break;
+// Display the board and the pieces on it
+void game3_Board::display_board() {
+    for (int i: {0,1,2,3,4}) {
+        cout << "\n| ";
+        for (int j: {0,1,2,3,4}) {
+            cout << "(" << i << "," << j << ")";
+            cout << setw(2) << board [i][j] << " |";
         }
-        if(!((value[0] >= '0' && value[0] <= '5') || (value[0] >= 'B' && value[0] <= 'C') || (value[0] >= 'b' && value[0] <= 'c'))){
-            cout << "Invalid operation found!" << endl;
-            cout <<"If you want to terminate the program type (0), if you want to continue type (1)" << endl;
-            int opinion;
-            cin >> opinion;
-            if(opinion){
-                continue;
-            }
-            else{
-                exit(0);
-            }
+        cout << "\n-----------------------------";
+    }
+    cout << endl;
+}
+
+// Returns true if there is any winner
+// either X or O
+// Written in a complex way. DO NOT DO LIKE THIS.
+
+bool game3_Board::is_winner() {
+
+
+
+    for(int i=0;i<n_rows;++i){
+        for(int j=0;j<n_cols;++j){
+
+
         }
 
-        machine.run(value);
-        int x;
-        cout << endl << "If you want to display the status now type (1), if you don't type (0): " << endl;
-        cin >> x;
-        if(x){
-            cout << endl << "Registers: " << endl << endl;
-            for (int i = 0; i < 16 ; ++i) {
-                cout << "-------------------------------------" << endl;
-                cout<<"Register "<<i+1<<" contains :"<<machine.registers[i]<<endl;
+    }
+
+}
+
+// Return true if 9 moves are done and no winner
+bool game3_Board::is_draw() {
+    return (n_moves == 12 && !is_winner());
+}
+
+bool game3_Board::game_is_over () {
+    return n_moves >= 12;
+}GameManager::GameManager(Board* bPtr, Player* playerPtr[2] ) {
+    boardPtr = bPtr;
+    players[0] = playerPtr[0];
+    players[1] = playerPtr[1];
+}
+//clss aiplayer:player{
+//}
+
+void GameManager::run() {
+    int x, y;
+
+
+    while (!boardPtr->game_is_over()) {
+        for (int i:{0,1}) {
+            players[i]->get_move(x, y);
+            while (!boardPtr->update_board (x, y, players[i]->get_symbol())){
+                players[i]->get_move(x, y);
             }
-            cout << "____________________________________" << endl << endl;
-            cout << "Program Counter: " <<machine.pc << endl;
-            cout << "____________________________________" << endl << endl;
-            cout << "Instruction Register: " << value << endl;
-            cout << "____________________________________" << endl << endl;
+            boardPtr->display_board();
+
+
         }
     }
-    cout << endl << "Registers: " << endl << endl;
-    for (int i = 0; i < 16 ; ++i) {
-        cout << "-------------------------------------" << endl;
-        cout<<"Register "<<i+1<<" contains :"<<machine.registers[i]<<endl;
+    boardPtr->display_board();
+    if (boardPtr->is_draw()){
+        cout << "Draw!\n";
+        return;
     }
-    cout << "____________________________________" << endl << endl;
-    cout << "Program Counter: " <<machine.pc << endl;
-    cout << "____________________________________" << endl << endl;
-    cout << "Instruction Register: " << value << endl;
-    cout << "____________________________________" << endl << endl;
+    else if (boardPtr->is_winner()){
+        cout  << players[0]->to_string() << " wins\n";
+        return;
+    }
+    else if (!boardPtr->is_winner()){
+        cout  << players[1]->to_string() << " wins\n";
+        return;
+    }
+}
+RandomPlayer::RandomPlayer (char symbol, int dimension):Player(symbol)
+{
+    this->dimension = dimension;
+    this->name = "Random Computer Player";
+    cout << "My names is " << name << endl;
+}
 
+// Generate a random move
+void RandomPlayer::get_move (int& x, int& y) {
+    x = (int) (rand()/(RAND_MAX + 1.0) * dimension);
+    y = (int) (rand()/(RAND_MAX + 1.0) * dimension);
+}Player::Player(char symbol) {
+    this->symbol = symbol;
+}
+
+// Optionally, you can give him ID or order
+// Like Player 1 and Player 2
+Player::Player (int order, char symbol) {
+    cout << "Welcome player " << order << endl;
+    cout << "Please enter your name: ";
+    cin >> name;
+    this->symbol = symbol;
+}
+
+// Get desired move: x y (each between 0 and 2)
+// Virtual (can change for other player types)
+void Player::get_move (int& x, int& y) {
+    cout << "\nPlease enter your move x and y (0 to 4) separated by spaces: ";
+    cin >> x >> y;
+}
+
+// Give player info as a string
+string Player::to_string(){
+    return "Player: " + name ;
+}
+
+// Get symbol used by player
+char Player::get_symbol() {
+    return symbol;
 }
 
 
 
-int main() {
-    cout << " -----------------------------------------" << endl;
-    cout << "|    Welcome to our Machine Simulator    |" << endl;
-    cout << " -----------------------------------------" << endl;
+int main(){
+    int choice;
+    Player* players[2];
+    players[0] = new Player (1, 'x');
 
-    bool whatToDo = true;
+    cout << "Welcome to FCAI X-O Game. :)\n";
+    cout << "Press 1 if you want to play with computer: ";
+    cin >> choice;
+    if (choice != 1)
+        players[1] = new Player (2, 'o');
+    else
+        //Player pointer points to child
+        players[1] = new RandomPlayer ('o', 3);
 
-    while(whatToDo){
-        int x;
-        program();
-        cout << "If you want to load another program type (1)\nIf you want to exit the simulator type (0)\n";
-        cin >> x;
-        if(x){
-            whatToDo = true;
-        }
-        else{
-            whatToDo = false;
-        }
-    }
-
-    cout << " ------------------------------------------------------------" << endl;
-    cout << "|     Thanks for using our simulator, see you again! <3     |" << endl;
-    cout << " ------------------------------------------------------------" << endl;
-
-
-
+    GameManager x_o_game (new game3_Board(), players);
+    x_o_game.run();
+    system ("pause");
 }
