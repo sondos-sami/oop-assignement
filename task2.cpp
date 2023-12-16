@@ -150,32 +150,56 @@ void Four_X_O_Board ::display_board() {
     cout << endl;
 }
 bool Four_X_O_Board ::is_winner() {
-
+    
+    int x_count = 0, o_count = 0;
+    
     for (int i = 0; i < 6 ; ++i) {
-        for (int j = 0; j < 3 ; ++j) {
-            if( (board[i][j] == board[i][j+1]) && (board[i][j+1] == board[i][j+2]) && (board[i][j] == 'X' || board[i][j] =='O') ){
+        for (int j = 0; j < 4 ; ++j) {
+            if( ( board[i][j] == board[i][j+1]) && (board[i][j+1] == board[i][j+2] && board[i][j+2] == board[i][j+3] ) && (board[i][j] == 'X' || board[i][j] =='O') ){
                 return true;
             }
         }
     }
 
     for (int i = 0; i < 7 ; ++i) {
-        for (int j = 0; j < 4 ; ++j) {
-            if( (board[j][i] == board[j+1][i]) && (board[j+1][i] == board[j+2][i]) && (board[j][i] == 'X'|| board[j][i] =='O') ){
+        for (int j = 0; j < 3 ; ++j) {
+            if( (board[j][i] == board[j+1][i]) && (board[j+1][i] == board[j+2][i]  && board[j+2][i] == board[j+3][i] ) && (board[j][i] == 'X'|| board[j][i] =='O') ){
                 return true;
             }
         }
     }
 
-    for (int i = 0; i < 4 ; ++i) {
-        for (int j = 0; j < 5 ; ++j) {
-            if((board[i][j] == board[i+1][j+1]) && (board[i+1][j+1] == board[i+2][j+2]) && (board[i][j] == 'X'|| board[i][j] =='O')){
+    for (int i = 3; i < 6; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            x_count = 0;
+            o_count = 0;
+            for (int k = 0; k < 4; ++k) {
+                if (board[i - k][j + k] == 'X') {
+                    x_count++;
+                } else if (board[i - k][j + k] == 'O') {
+                    o_count++;
+                }
+            }
+            if (x_count == 4 || o_count == 4) {
                 return true;
             }
-            if((board[i][j+2] == board[i+1][j+1]) && (board[i+1][j+1] == board[i+2][j]) && (board[i][j+2] == 'X' || board[i][j+2] =='O')){
+        }
+    }
+    
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            x_count = 0;
+            o_count = 0;
+            for (int k = 0; k < 4; ++k) {
+                if (board[i + k][j + k] == 'X') {
+                    x_count++;
+                } else if (board[i + k][j + k] == 'O') {
+                    o_count++;
+                }
+            }
+            if (x_count == 4 || o_count == 4) {
                 return true;
             }
-
         }
     }
 
