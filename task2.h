@@ -21,7 +21,6 @@ public:
 
 //-------------------------------------------------\\
 
-
 class X_O_Board:public Board {
 public:
     X_O_Board ();
@@ -34,6 +33,18 @@ public:
 
 //-------------------------------------------------\\
 
+class Pyramic_X_O_Board : public Board{
+public:
+    Pyramic_X_O_Board();
+    bool update_board (int x, int y, char mark);
+    void display_board();
+    bool is_winner();
+    bool is_draw();
+    bool game_is_over();
+
+};
+
+//-------------------------------------------------\\
 
 class Four_X_O_Board : public Board{
 public:
@@ -45,6 +56,21 @@ public:
     bool game_is_over();
 };
 
+//-------------------------------------------------\\
+
+class game3_Board : public Board {
+private:
+
+public:
+    int X;
+    int O;
+    game3_Board ();
+    bool update_board (int x, int y, char mark);
+    void display_board();
+    bool is_winner();
+    bool is_draw();
+    bool game_is_over();
+};
 
 //-------------------------------------------------\\
 
